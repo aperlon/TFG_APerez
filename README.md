@@ -1,8 +1,8 @@
 # Sistema Multimodal de IA para Diagnóstico Médico
-## TFG — Grado en Business Analytics 
+
+## TFG — Grado en Business Analytics
 
 **Autor:** Alfredo Pérez Navalón  
-
 
 ---
 
@@ -14,22 +14,26 @@ El sistema se concibe como herramienta de apoyo al profesional clínico, no como
 
 ### Datasets
 
-| Dataset | Tipo | Registros | Clases | Fuente |
-|---------|------|-----------|--------|--------|
-| Heart Disease UCI | Tabular (4 hospitales) | 920 → 434 (tras limpieza) | 2 (sano / enfermo) | [UCI Repository](https://archive.ics.uci.edu/dataset/45/heart+disease) |
-| HAM10000 | 10.015 imágenes dermatoscópicas | 7 lesiones cutáneas | 7 (nv, mel, bkl, bcc, akiec, vasc, df) | [Harvard Dataverse](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/DBW86T) |
+
+| Dataset           | Tipo                            | Registros                 | Clases                                 | Fuente                                                                                               |
+| ----------------- | ------------------------------- | ------------------------- | -------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| Heart Disease UCI | Tabular (4 hospitales)          | 920 → 434 (tras limpieza) | 2 (sano / enfermo)                     | [UCI Repository](https://archive.ics.uci.edu/dataset/45/heart+disease)                               |
+| HAM10000          | 10.015 imágenes dermatoscópicas | 7 lesiones cutáneas       | 7 (nv, mel, bkl, bcc, akiec, vasc, df) | [Harvard Dataverse](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/DBW86T) |
+
 
 ### Modelos implementados
 
 **Machine Learning (Heart Disease):** Logistic Regression, Random Forest, XGBoost, Gradient Boosting, AdaBoost, SVM, KNN — evaluados con validación cruzada estratificada (5-fold).
 
 **Deep Learning (HAM10000):**
+
 - CNN from scratch — baseline naive (1.2M parámetros, ~60% accuracy)
 - ResNet-50 con transfer learning — línea base (~79% accuracy)
 - EfficientNet-B3 con transfer learning — modelo avanzado (~78% accuracy)
 - Ensemble — promedio de probabilidades ResNet + EfficientNet
 
 **Estudios complementarios:**
+
 - Estudio de data augmentation y sus consecuencias en el datatset (3 niveles: mínima, suave, agresiva)
 - Validación con 5-Fold Cross-Validation estratificado por lesión
 
@@ -94,12 +98,14 @@ Principales dependencias: pandas, numpy, scikit-learn, xgboost, matplotlib, seab
 
 Los notebooks de deep learning requieren **GPU** y están diseñados para Google Colab:
 
-| Notebook | Descripción | GPU | Tiempo aprox. |
-|----------|-------------|-----|---------------|
-| `ID_HAM10000_id.ipynb` | Ingeniería del dato | CPU | ~5 min |
-| `AD1_HAM10000_ad.ipynb` | CNN + ResNet + EfficientNet | T4 / A100 | ~2–3 horas |
-| `AD2....ipynb` | 3 niveles × ResNet-50 | A100 | ~1.5 horas |
-| `AD3.ipynb` | 5-Fold CV × 2 estrategias | A100 | ~2 horas |
+
+| Notebook                | Descripción                 | GPU       | Tiempo aprox. |
+| ----------------------- | --------------------------- | --------- | ------------- |
+| `ID_HAM10000_id.ipynb`  | Ingeniería del dato         | CPU       | ~5 min        |
+| `AD1_HAM10000_ad.ipynb` | CNN + ResNet + EfficientNet | T4 / A100 | ~2–3 horas    |
+| `AD2....ipynb`          | 3 niveles × ResNet-50       | A100      | ~1.5 horas    |
+| `AD3.ipynb`             | 5-Fold CV × 2 estrategias   | A100      | ~2 horas      |
+
 
 Dependencias en Colab: PyTorch 2.x, torchvision, scikit-learn (preinstalados en Colab).
 
@@ -112,7 +118,13 @@ Dependencias en Colab: PyTorch 2.x, torchvision, scikit-learn (preinstalados en 
 ```bash
 git clone https://github.com/[tu-usuario]/TFG-Sistema-Multimodal-IA.git
 cd TFG-Sistema-Multimodal-IA
+
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
 ```
+
+
 
 ### Paso 2 — Heart Disease (ejecución local)
 
@@ -130,15 +142,17 @@ No requiere GPU ni configuración adicional.
 #### 3.1 Descargar las imágenes (no incluidas por tamaño)
 
 Descargar desde el Harvard Dataverse:  
-https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/DBW86T
+[https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/DBW86T](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/DBW86T)
 
 Archivos necesarios:
+
 - `HAM10000_images_part_1.zip` (~2.2 GB)
 - `HAM10000_images_part_2.zip` (~0.8 GB)
 
 #### 3.2 Subir a Google Drive
 
 Crear la carpeta `MyDrive/HAM10000/` en Google Drive y subir:
+
 ```
 Google Drive/
 └── MyDrive/
@@ -150,13 +164,10 @@ Google Drive/
 
 #### 3.3 Ejecutar notebooks en orden
 
-1. **`03_HAM10000_id.ipynb`** — Ingeniería del dato. Genera `ham10000_metadata_clean.csv` con los splits, rutas de imágenes y metadata limpio. Este CSV es necesario para todos los notebooks siguientes.
-
-2. **`AD1`** — Análisis principal. Entrena CNN from scratch, ResNet-50 y EfficientNet-B3. Genera las figuras comparativas y los modelos `.pth`.
-
-3. **`AD2`** — Estudio de ablación. Compara 3 niveles de data augmentation (mínima, suave, agresiva) sobre ResNet-50. Genera 7 figuras de comparación.
-
-4. **`AD3`** — Cross-validation. Valida la estrategia suave uniforme vs. augmentation diferenciada por clase con 5-Fold CV estratificado por lesión.
+1. `**03_HAM10000_id.ipynb**` — Ingeniería del dato. Genera `ham10000_metadata_clean.csv` con los splits, rutas de imágenes y metadata limpio. Este CSV es necesario para todos los notebooks siguientes.
+2. `**AD1**` — Análisis principal. Entrena CNN from scratch, ResNet-50 y EfficientNet-B3. Genera las figuras comparativas y los modelos `.pth`.
+3. `**AD2**` — Estudio de ablación. Compara 3 niveles de data augmentation (mínima, suave, agresiva) sobre ResNet-50. Genera 7 figuras de comparación.
+4. `**AD3**` — Cross-validation. Valida la estrategia suave uniforme vs. augmentation diferenciada por clase con 5-Fold CV estratificado por lesión.
 
 > **Nota:** Los notebooks 04–06 montan Google Drive automáticamente en la primera celda y copian las imágenes a disco local para acelerar el entrenamiento. La ruta esperada es `MyDrive/HAM10000/`.
 
@@ -164,23 +175,25 @@ Google Drive/
 
 ## Resultados principalesen
 
-
-
 ### HAM10000 — Deep Learning
 
-| Modelo | Accuracy | F1 Weighted | F1 Macro | AUC-ROC | Mel Recall |
-|--------|----------|-------------|----------|---------|------------|
-| CNN from scratch | 0.5962 | 0.6339 | 0.4144 | 0.8669 | 0.80 |
-| ResNet-50 (TL) | 0.7950 | 0.7950 | 0.6600 | 0.9360 | 0.67 |
-| EfficientNet-B3 (TL) | 0.7792 | 0.7910 | 0.6603 | 0.9360 | 0.67 |
-| Ensemble | 0.7832 | 0.7944 | 0.6731 | — | — |
+
+| Modelo               | Accuracy | F1 Weighted | F1 Macro | AUC-ROC | Mel Recall |
+| -------------------- | -------- | ----------- | -------- | ------- | ---------- |
+| CNN from scratch     | 0.5962   | 0.6339      | 0.4144   | 0.8669  | 0.80       |
+| ResNet-50 (TL)       | 0.7950   | 0.7950      | 0.6600   | 0.9360  | 0.67       |
+| EfficientNet-B3 (TL) | 0.7792   | 0.7910      | 0.6603   | 0.9360  | 0.67       |
+| Ensemble             | 0.7832   | 0.7944      | 0.6731   | —       | —          |
+
 
 ### Estudio de ablación — Data Augmentation (5-Fold CV)
 
-| Estrategia | Accuracy | F1 Macro | AUC-ROC | Mel Recall |
-|------------|----------|----------|---------|------------|
-| **Suave (uniforme)** | **0.7647 ± 0.0135** | **0.6229** | **0.9342** | **0.537** |
-| Por clase | 0.7231 ± 0.0085 | 0.4191 | 0.8590 | 0.006 |
+
+| Estrategia           | Accuracy            | F1 Macro   | AUC-ROC    | Mel Recall |
+| -------------------- | ------------------- | ---------- | ---------- | ---------- |
+| **Suave (uniforme)** | **0.7647 ± 0.0135** | **0.6229** | **0.9342** | **0.537**  |
+| Por clase            | 0.7231 ± 0.0085     | 0.4191     | 0.8590     | 0.006      |
+
 
 La estrategia de augmentation suave uniforme supera en todas las métricas a la estrategia diferenciada por clase (hipotesisi del último cuaderno (AD3)), que colapsa catastróficamente en la detección de melanoma (recall 0.006).
 
@@ -195,17 +208,19 @@ La estrategia de augmentation suave uniforme supera en todas las métricas a la 
 
 ## Tecnologías
 
-| Herramienta | Uso |
-|-------------|-----|
-| Python 3.10+ | Lenguaje principal |
-| scikit-learn | Modelos ML, métricas, cross-validation |
-| XGBoost | Gradient boosting para datos tabulares |
-| PyTorch + torchvision | Modelos de deep learning |
-| SHAP | Explicabilidad en modelos tabulares |
-| Google Colab (T4/A100) | Entrenamiento de modelos DL |
-| Cursor / VS Code | Desarrollo local |
-| Git + GitHub | Control de versiones |
-| Matplotlib + Seaborn | Visualización |
+
+| Herramienta            | Uso                                    |
+| ---------------------- | -------------------------------------- |
+| Python 3.10+           | Lenguaje principal                     |
+| scikit-learn           | Modelos ML, métricas, cross-validation |
+| XGBoost                | Gradient boosting para datos tabulares |
+| PyTorch + torchvision  | Modelos de deep learning               |
+| SHAP                   | Explicabilidad en modelos tabulares    |
+| Google Colab (T4/A100) | Entrenamiento de modelos DL            |
+| Cursor / VS Code       | Desarrollo local                       |
+| Git + GitHub           | Control de versiones                   |
+| Matplotlib + Seaborn   | Visualización                          |
+
 
 ---
 
@@ -229,4 +244,4 @@ Este proyecto es un Trabajo Fin de Grado académico. Los datasets utilizados son
 ## Contacto
 
 Alfredo Pérez Navalón — Universidad Francisco de Vitoria  
-pereznavalionalfredo@gmail.com
+[pereznavalionalfredo@gmail.com](mailto:pereznavalionalfredo@gmail.com)
